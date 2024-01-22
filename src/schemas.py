@@ -27,3 +27,8 @@ class ResponseContactModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class UserModel(BaseModel):
+    username: str
+    password: str

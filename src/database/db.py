@@ -1,12 +1,17 @@
 import configparser
 import pathlib
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt, JWTError
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from starlette import status
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/users/login")
 
 file_config = pathlib.Path(__file__).parent.parent.joinpath('conf/config.ini')
 config = configparser.ConfigParser()
@@ -22,7 +27,8 @@ Base = declarative_base()
 engine = create_engine(url, echo=False, pool_size=5)
 
 DBSession = sessionmaker(bind=engine, autoflush=False, autocommit=False)
-
+SECRET_KEY = "secret_key"
+ALGORITHM = "HS256"
 
 # Dependency
 def get_db():
