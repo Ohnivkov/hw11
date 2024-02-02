@@ -1,4 +1,5 @@
 from fastapi import Depends, Query, APIRouter, Path, HTTPException
+from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.orm import Session
 from src.database.auth import auth_service
 from src.database.db import get_db
@@ -36,7 +37,7 @@ async def get_contact_by_name(contact_name: str, db: Session = Depends(get_db),
     return contact
 
 
-@router.get("/by_surname/{contact_surname}", response_model=ResponseContactModel)
+@router.get("/by_surname/{contact_surname}")
 async def get_contact_by_surname(contact_surname: str, db: Session = Depends(get_db),
                                  current_user: User = Depends(auth_service.get_current_user)):
     contact = await repository_contacts.get_contact_by_surname(contact_surname, db, current_user)
@@ -45,7 +46,8 @@ async def get_contact_by_surname(contact_surname: str, db: Session = Depends(get
     return contact
 
 
-@router.get("/by_email/{contact_email}", response_model=ResponseContactModel)
+@router.get("/by_email/{contact_email}", dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+            response_model=ResponseContactModel)
 async def get_contact_by_email(contact_email: str, db: Session = Depends(get_db),
                                current_user: User = Depends(auth_service.get_current_user)):
     contact = await repository_contacts.get_contact_by_email(contact_email, db, current_user)
@@ -54,7 +56,7 @@ async def get_contact_by_email(contact_email: str, db: Session = Depends(get_db)
     return contact
 
 
-@router.get("/get_birthdays", response_model=list[ResponseContactModel])
+@router.get("/get_birthdays")
 async def get_birthdays(db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     contact = await repository_contacts.get_birthdays(db, current_user)
     if contact is None or contact == []:
@@ -62,7 +64,8 @@ async def get_birthdays(db: Session = Depends(get_db), current_user: User = Depe
     return contact
 
 
-@router.post("/contact", status_code=status.HTTP_201_CREATED)
+@router.post("/contact", response_model=ResponseContactModel, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def create_contact(contact: ContactModel, db: Session = Depends(get_db),
                          current_user: User = Depends(auth_service.get_current_user)):
     new_contact = await repository_contacts.create_contacts(contact, db, current_user)

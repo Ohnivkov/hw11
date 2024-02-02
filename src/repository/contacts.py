@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from sqlalchemy import extract
 from sqlalchemy.orm import Session
 from src.database.models import Contact, User

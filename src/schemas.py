@@ -32,3 +32,8 @@ class ResponseContactModel(BaseModel):
 class UserModel(BaseModel):
     username: str
     password: str
+    email: EmailStr
+
+
+class RequestEmail(BaseModel):
+    email: EmailStr
