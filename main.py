@@ -27,11 +27,24 @@ db = Session(get_db())
 
 @app.get("/")
 def read_root():
+    """
+        main root
+        :return: message.
+        :rtype: {"message": "Hello World"} | None
+
+        """
     return {"message": "Hello World"}
 
 
 @app.get("/api/healthchecker")
 def healthchecker(db: Session = Depends(get_db)):
+    """
+                Checks connection to db
+                :param db: The database session.
+                :type db: Session
+                :return: The message if connection is ok.
+                :rtype: {"message": "Welcome to FastAPI!"} | Error
+                """
     try:
         # Make request
         result = db.execute(text("SELECT 1")).fetchone()
@@ -54,4 +67,4 @@ app.include_router(contacts.router, prefix='/api')
 app.include_router(users.router, prefix='/api')
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
