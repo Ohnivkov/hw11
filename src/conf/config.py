@@ -5,8 +5,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DB_URL: str = "postgresql+asyncpg://postgres:111111@localhost:5432/abc"
-    SECRET_KEY_JWT: str = "1234567890"
+    DB_URL: str = "postgresql+asyncpg://postgres:change-me@localhost:5432/contacts"
+    SECRET_KEY_JWT: str = "change-me"
     ALGORITHM: str = "HS256"
     MAIL_USERNAME: EmailStr = "postgres@meail.com"
     MAIL_PASSWORD: str = "postgres"
@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
     REDIS_PASSWORD: str | None = None
     CLD_NAME: str = 'abc'
-    CLD_API_KEY: int = 326488457974591
-    CLD_API_SECRET: str = "secret"
+    CLD_API_KEY: int = 0
+    CLD_API_SECRET: str = "change-me"
 
     @field_validator("ALGORITHM")
     @classmethod
